@@ -1,5 +1,6 @@
 import math
 
+
 class RandomNumberGenerator:
     def __init__(self, seedValue=None):
         self.__seed=seedValue
