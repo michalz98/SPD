@@ -82,7 +82,7 @@ for k in range(m):
         S[i][k] = C[i][k] - P[pi[i]][k]
 
 Cmax = max(max(C))
-
+Cmax_b = Cmax
 
 print("Algorytm Johnson'a:")
 for i in range(n):
@@ -102,19 +102,17 @@ for i in range(m):
     for j in range(n):
         C[j][i] = 0
 
-CmaxB = Cmax
+# ============================= BruteForce =============================
 
-#============================== BruteForce ======================
 
 class Data:
-    UB = 99999
+    UB = 9999
     PI = []
 
 
 N = J.copy()
 for j in N:
     brute(j, N.copy(), P, C.copy(), n, m, pi, Data)
-#print(Data.PI)
 
 if Data.PI:
     C[0][0] = P[Data.PI[0]][0]
@@ -141,13 +139,20 @@ if Data.PI:
     for i in range(n):
         Data.PI[i] -= 1
 
+else:
+    print("UB poczatkowe optymalne (algorytm Johnsona)")
+
+Data.PI.clear()
+Data.UB = 0
+
+for j in range(m):
+    for i in J:
+        C[i][j] = 0
 
 # ============================= BnB =============================
 
-
-    Data.UB = CmaxB
-    Data.PI.clear()
-
+Data.UB = Cmax_b
+Data.PI.clear()
 
 N = J.copy()
 for j in N:
@@ -169,6 +174,7 @@ if Data.PI:
     print("Algorytm BnB:")
     for i in range(n):
         Data.PI[i] += 1
+
     print(f'Pi:{Data.PI}')
     print(f'C:{C}')
     print(f'Cmax:{Cmax}')
