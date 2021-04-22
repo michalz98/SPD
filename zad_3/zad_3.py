@@ -1,5 +1,6 @@
 from RandomNumberGenerator import RandomNumberGenerator as rng
 from Johnson import johnson
+import itertools
 
 seed = int(input("Ziarno: "))
 n = int(input("Ilosc zadan: "))
@@ -90,3 +91,18 @@ print(f'Cmax:{Cmax}')
 for i in pi:
     i -= 1
 print()
+
+
+
+
+# print("Metoda siłowa:")
+# for i in pi:
+#     i += 1
+
+# print(f'Pi:{pi}')
+# print(f'C:{C}')
+# print(f'Cmax:{Cmax}')
+
+# for i in pi:
+#     i -= 1
+# print()
