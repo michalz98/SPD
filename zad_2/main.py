@@ -1,5 +1,6 @@
 from RandomNumberGenerator import RandomNumberGenerator as rng
 from DynamicProgramming import dP
+from Greedy import Greedy
 
 seed = int(input("Ziarno: "))
 n = int(input("Ilosc zadan: "))
@@ -47,6 +48,17 @@ for i in range(n):
     J[i] -= 1
 
 # --------------------------BruteForce-----------------------------------
+
+
+# --------------------------Greedy---------------------------------------
+
+
+print("Algorytm zachłanny:")
+print(f'Pi:{J}')
+print(f'P: {P}')
+print(f'W:{W}')
+print(f'D:{D}')
+print()
 
 
 # --------------------------DynamicProgramming-----------------------------------
