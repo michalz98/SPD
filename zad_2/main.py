@@ -1,6 +1,8 @@
 from RandomNumberGenerator import RandomNumberGenerator as rng
-from DynamicProgramming import dP
+# from DynamicProgramming import dP
 from Greedy import Greedy
+from BruteForce import brute
+from DynamicProgramming import dP
 
 seed = int(input("Ziarno: "))
 n = int(input("Ilosc zadan: "))
@@ -49,26 +51,33 @@ for i in range(n):
 
 # --------------------------BruteForce-----------------------------------
 
+#brute(J.copy(), P.copy(), D.copy(), W.copy())
 
 # --------------------------Greedy---------------------------------------
 
 
-print("Algorytm zachłanny:")
-print(f'Pi:{J}')
-print(f'P: {P}')
-print(f'W:{W}')
-print(f'D:{D}')
-print()
+# PI = Greedy(J.copy(), D)
+
+# print("Algorytm zachłanny:")
+# print(f'Pi:{PI}')
+# print(f'P: {P}')
+# print(f'W:{W}')
+# print(f'D:{D}')
+# print()
 
 
 # --------------------------DynamicProgramming-----------------------------------
-d = []
-memory.append(0)
-for i in range(0, pow(2, n)):
-    d.append(i)
 
-for j in J:
-    dP(j, J.copy, P, W, D, memory)
+dP(J, P, D, W)
 
-print(len(d))
+
+# d = []
+# memory.append(0)
+# for i in range(0, pow(2, n)):
+#     d.append(i)
+
+# for j in J:
+#     dP(j, J.copy, P, W, D, memory)
+
+# print(len(d))
 # print(n-1 - bin(1)[2:].zfill(n).find("1"))
