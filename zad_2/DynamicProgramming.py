@@ -24,15 +24,23 @@ def dP(j_set, p_set, d_set, w_set):
         else:
             correct += 1
             b = 1
+
+            num_ones = bin(i)[2:].zfill(n).count("1")
+
             for j in range(bin(pow(2,n)-1)[2:].zfill(n).count("1")):
-                num_ones = bin(i)[2:].zfill(n).count("1")
+                # print(f'war1: {bin(b)[2:].zfill(n)}')
                 if bin(i^b)[2:].zfill(n).count("1") == (num_ones - 1):
                     num = i^b
-                    print(f'bin op: {bin(num)[2:].zfill(n)}')
-                    ind_m.append(num)
+                    # print(f'bin: {bin(i)[2:].zfill(n)}')
+                    # print(f'bin op: {bin(num)[2:].zfill(n)}')
+                    ind_m.append(bin(num)[2:].zfill(n).find("1")-1)
+                    ind_p.append(bin(b)[2:].zfill(n).find("1")-1)
+                    # print(f'ind_m: {n-1-bin(num)[2:].zfill(n).find("1")}, ind_p: {n-1-bin(b)[2:].zfill(n).find("1")}')
                     # print(bin(b)[2:].zfill(n))
                     # print(i^b)
 
+                    for cnt in num_ones:
+                        
 
                     # ind = bin(i^b)[2:].zfill(n).find("1")
                     # sum = 0
@@ -51,6 +59,5 @@ def dP(j_set, p_set, d_set, w_set):
                     #     max = sum - d_set[i]
 
                     # print(f'max: {max}')
-                    # b = b*pow(2, 1)
-        # if len(j_set)-1 - bin(1)[2:].zfill(len(j_set)).find("1")
+                b = b*pow(2, 1)
 
