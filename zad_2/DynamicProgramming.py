@@ -20,6 +20,7 @@ def dP(j_set, p_set, d_set, w_set):
                 max = 0
             else:
                 max = p_set[i-correct] - d_set[i-correct]
+
             memory[i] = max * w_set[i - correct]
         else:
             correct += 1
@@ -38,9 +39,31 @@ def dP(j_set, p_set, d_set, w_set):
                     # print(f'ind_m: {n-1-bin(num)[2:].zfill(n).find("1")}, ind_p: {n-1-bin(b)[2:].zfill(n).find("1")}')
                     # print(bin(b)[2:].zfill(n))
                     # print(i^b)
+                b = b*pow(2, 1)
+            
+            b = 1
+            Fmin = []
+            for j in range(bin(pow(2,n)-1)[2:].zfill(n).count("1")):
+                if bin(i^b)[2:].zfill(n).count("1") == (num_ones - 1):
 
-                    for cnt in num_ones:
-                        
+                    indm = bin(num)[2:].zfill(n).find("1")-1
+                    indp = bin(b)[2:].zfill(n).find("1")-1
+
+                    sump = 0
+                    for cnt in range(num_ones):
+                        sump += p_set[ind_p[cnt]]
+                    
+                    if sump - d_set[indp] < 0:
+                        maxp = 0
+                    else:
+                        maxp = sump - d_set[indp]
+
+                    Fmin.append(maxp*w_set[indp] + memory[indm])
+                b = b*pow(2, 1)
+
+            
+            memory[i] = min(Fmin)
+            print(Fmin)
 
                     # ind = bin(i^b)[2:].zfill(n).find("1")
                     # sum = 0
@@ -59,5 +82,5 @@ def dP(j_set, p_set, d_set, w_set):
                     #     max = sum - d_set[i]
 
                     # print(f'max: {max}')
-                b = b*pow(2, 1)
+            
 
