@@ -4,6 +4,7 @@ import math
 class RandomNumberGenerator:
     def __init__(self, seedValue=None):
         self.__seed=seedValue
+
     def nextInt(self, low, high):
         m = 2147483647
         a = 16807
@@ -16,6 +17,7 @@ class RandomNumberGenerator:
         value_0_1 = self.__seed
         value_0_1 =  value_0_1/m
         return low + int(math.floor(value_0_1 * (high - low + 1)))
+
     def nextFloat(self, low, high):
         low*=100000
         high*=100000
