@@ -1,5 +1,6 @@
 from RandomNumberGenerator import RandomNumberGenerator
 import itertools
+import math
 
 seed = int(input("Podaj seed: "))
 tasks_num = int(input("Ilosc zadan: "))
@@ -30,7 +31,7 @@ class Data:
         tasks_arr = []
 
         for i in range(t):
-            tasks_arr.append([0] * rng.nextInt(1, m * 2))
+            tasks_arr.append([0] * math.floor(rng.nextInt(1, m * 1.2) + 1))
 
         tasks_arr[0][0] = 1
 
@@ -53,18 +54,10 @@ class Data:
     # generowanie kolejki wykonywania zadań dla poszczególnych maszyn
     def queue_tab_gen(self, m):
         # m_op_tab = []   # pomocnicza tabela przechowująca ilość zadań dla danej maszyny
-        q_tab = []      # tabela kolejki
+        q_tab = []  # tabela kolejki
 
         for i in range(m):
             q_tab.append([])
-        # for i in range(m):
-        #     m_op_tab.append(0)
-        #
-        # for i in self.operations:
-        #     m_op_tab[i[0]-1] += 1
-        #
-        # for i in range(m):
-        #     q_tab.append([-1] * m_op_tab[i])
 
         return q_tab
 
@@ -163,7 +156,7 @@ def addQTabel(dane):
         sum_p = 0
 
         if tmp_succesor[tmp_top[i]] != 0:
-            sum_p = dane.operations[tmp_succesor[tmp_top[i]]-1][1]
+            sum_p = dane.operations[tmp_succesor[tmp_top[i]] - 1][1]
         dane.q_tab[tmp_top[i]] = dane.operations[tmp_top[i]][1] + sum_p
 
 
@@ -178,8 +171,9 @@ def addRTabel(dane):
         sum_p = 0
 
         if tmp_prec[tmp_top[i]] != 0:
-            sum_p = dane.operations[tmp_prec[tmp_top[i]]-1][1]
+            sum_p = dane.operations[tmp_prec[tmp_top[i]] - 1][1]
         dane.r_tab[tmp_top[i]] = dane.operations[tmp_top[i]][1] + sum_p
+
 
 def sortByP(data):
     tmp_tab = data.topologic_queue.copy()
@@ -196,49 +190,103 @@ def sortByP(data):
         tmp_tab.pop(it)
         data.p_order.append(index)
 
-def appendTasks(data):
-    for i in data.p_order:
-        m_num = data.operations[i][0] - 1
-        data.queue_tab[m_num].append(i)
+# =============================================
 
-        if len(data.queue_tab[m_num]) > 1:
-            for permutation in itertools.permutations(data.queue_tab[m_num]):
-                for j in len(permutation):
-                    suma = 0
-                    if i == 0:
+def INSA(data):
+    while data.p_order:
+        checkPrecAnces(dane)
+        addToTopQueue(dane)
+        addQTabel(dane)
+        addRTabel(dane)
+        for i in data.p_order:
+            m_num = data.operations[i][0] - 1
+            data.queue_tab[m_num].append(i)
+            t_p_tmp = []
+            o_p_tmp = []
+            t_s_tmp = []
+            o_s_tmp = []
+
+            for k in dane.t_precursors:
+                for j in k:
+                    t_p_tmp.append(j)
+
+            for k in dane.o_precursors:
+                for j in k:
+                    o_p_tmp.append(j)
+
+            for k in dane.t_succesors:
+                for j in k:
+                    t_s_tmp.append(j)
+
+            for k in dane.o_succesors:
+                for j in k:
+                    o_s_tmp.append(j)
+
+            if len(data.queue_tab[m_num]) > 1:
+                sum_min = 999999
+                pi_m = []
+                for permutation in itertools.permutations(data.queue_tab[m_num]):
+                    for j in range(len(permutation)):
+                        suma = 0
                         max_tmp = []
-                        max_tmp.append(data.r_tab[data.t_precursors[m_num][i]])
+                        if i == 0:
+                            max_tmp.append(data.r_tab[t_p_tmp[i]-1])
+
+                        else:
+                            max_tmp.append(data.r_tab[t_p_tmp[i]-1])
+                            max_tmp.append(data.r_tab[o_p_tmp[i]-1])
+
                         suma += max(max_tmp)
-                    else:
-                        max_tmp = []
-                        max_tmp.append(data.r_tab[data.t_precursors[m_num][i]])
-                        max_tmp.append(data.r_tab[data.o_precursors[m_num][i]])
-                        suma += max(max_tmp)
+
+                        max_tmp.clear()
+
                         suma += data.operations[i][1]
 
+                        if i == len(permutation) - 1:
+                            max_tmp.append(data.r_tab[t_s_tmp[i]-1])
+                        else:
+                            max_tmp.append(data.r_tab[t_s_tmp[i]-1])
+                            max_tmp.append(data.r_tab[o_s_tmp[i]-1])
+
+                        suma += max(max_tmp)
+                        if suma < sum_min: 
+                            pi_m = permutation
+                            sum_min = suma
+
+                    for c in range(len(data.queue_tab[m_num])):
+                        data.queue_tab[m_num][c] = pi_m[c]
+                        # print(f'queue: {data.queue_tab}')
+
+                    for c in range(len(data.tasks[m_num])):
+                        if c >= 1:
+                            # print(f'm: {m_num}, c:{c-1}, {data.o_precursors}')
+                            # print(data.o_precursors[m_num][c-1])
+                            print(pi_m)
+                            data.o_precursors[m_num][c] = pi_m[c-1]
+                        if c < len(data.queue_tab[m_num]) -1:
+                            # print(f'm: {m_num} , c:{c-1}, {data.o_precursors}')
+                            # print(data.o_precursors[m_num][c-1])
+                            # print(pi_m[c])
+                            data.o_succesors[m_num][c] = pi_m[c+1]
+
+
+            data.p_order.remove(i)
 
 dane = Data(tasks_num, machines_num)
+
+print(f'queue: {dane.queue_tab}')
+print(f'tasks: {dane.tasks}')
+print(f'precursors: {dane.o_precursors}')
 
 checkPrecAnces(dane)
 addToTopQueue(dane)
 addQTabel(dane)
 addRTabel(dane)
 sortByP(dane)
-appendTasks(dane)
+INSA(dane)
 
-
-# print(f'tasks: {dane.tasks}')
+print(f'tasks: {dane.tasks}')
 print(f'operations: {dane.operations}')
-print(f'queue:  {dane.queue_tab}')
-print(f't_precursors: {dane.t_precursors}')
-# print(f't_succesor: {dane.t_succesors}')
-# print(f'o_precursors: {dane.o_precursors}')
-# print(f'o_succesor: {dane.o_succesors}')
-# # print(f'liczba poprzednikow: {dane.prec_num}')
-# print(f'topologic: {dane.topologic_queue}')
-# print(f'R: {dane.r_tab}')
-# print(f'Q: {dane.q_tab}')
 print(f'p_order: {dane.p_order}')
-# print(dane.cnt)
 
 
