@@ -175,6 +175,8 @@ def addRTabel(dane):
 
         if dane.t_precursors[tmp_top[i]] != 0:
             sum_p = dane.operations[dane.t_precursors[tmp_top[i]] - 1][1]
+            # if dane.o_precursors[tmp_top[i]] != 0:
+            #     sum_p += dane.o_precursors[tmp_top[i]]
 
         dane.r_tab[tmp_top[i]] = dane.operations[tmp_top[i]][1] + sum_p
 
@@ -196,6 +198,24 @@ def sortByP(data):
         data.p_order.append(index)
 
 
+def cMax(data):
+    c_max = 0
+    for m in data.queue_tab:
+        cmax_tmp = 0
+        # print()
+        for task in m:
+            # print(f'task: {task}')
+            cmax_tmp += data.operations[task][1]
+            if data.o_precursors[task] != 0:
+                # print(f'prec o :{data.o_precursors[task]}, task: {task}')
+                cmax_tmp += data.operations[data.o_precursors[task]][1]
+        if cmax_tmp > c_max:
+            # print(task)
+            c_max = cmax_tmp
+            ret = (c_max, task)
+    return ret
+
+
 def Insa(data):
     while data.p_order:
         task = data.p_order[0]
@@ -209,41 +229,47 @@ def Insa(data):
         if len(data.queue_tab[m_num]) > 1:
             sum_min = 999999
             for permutation in itertools.permutations(data.queue_tab[m_num]):
-                for j in range(len(permutation)):
-                    suma = 0
-                    max_tmp = []
-                    if task == permutation[0]:
-                        max_tmp.append(data.r_tab[t_p_tmp[task]-1])
+                flag = 0
+                for check in range(permutation.index(task)):
+                    for prec in dane.t_precursors:
+                        if check == prec:
+                            flag = 1
+                if flag == 0:
+                    for j in range(len(permutation)):
+                        suma = 0
+                        max_tmp = []
+                        if task == permutation[0]:
+                            max_tmp.append(data.r_tab[t_p_tmp[task]-1])
 
-                    else:
-                        max_tmp.append(data.r_tab[t_p_tmp[task]-1])
-                        max_tmp.append(data.r_tab[o_p_tmp[task]-1])
+                        else:
+                            max_tmp.append(data.r_tab[t_p_tmp[task]-1])
+                            max_tmp.append(data.r_tab[o_p_tmp[task]-1])
 
-                    suma += max(max_tmp)
+                        suma += max(max_tmp)
 
-                    max_tmp.clear()
+                        max_tmp.clear()
 
-                    suma += data.operations[task][1]
+                        suma += data.operations[task][1]
 
-                    if task == permutation[len(permutation) - 1]:
-                        # print(f'i: {task},j: {j}, {t_p_tmp[task]-1}')
-                        max_tmp.append(data.r_tab[t_s_tmp[task]-1])
-                    else:
-                        # print(f'i: {task},j: {j}, {t_p_tmp[task]-1}')
-                        max_tmp.append(data.r_tab[t_s_tmp[task]-1])
-                        max_tmp.append(data.r_tab[o_s_tmp[task]-1])
+                        if task == permutation[len(permutation) - 1]:
+                            # print(f'i: {task},j: {j}, {t_p_tmp[task]-1}')
+                            max_tmp.append(data.r_tab[t_s_tmp[task]-1])
+                        else:
+                            # print(f'i: {task},j: {j}, {t_p_tmp[task]-1}')
+                            max_tmp.append(data.r_tab[t_s_tmp[task]-1])
+                            max_tmp.append(data.r_tab[o_s_tmp[task]-1])
 
-                    suma += max(max_tmp)
+                        suma += max(max_tmp)
 
-                    if suma < sum_min:
-                        sum_min = suma
-                        for i in range(len(permutation)):
-                            data.q_tab[i] = permutation[i]
-                            if i - 1 > -1:
-                                data.o_precursors[permutation[i]] = permutation[i - 1]
+                        if suma < sum_min:
+                            sum_min = suma
+                            for i in range(len(permutation)):
+                                data.q_tab[i] = permutation[i]
+                                if i - 1 > -1:
+                                    data.o_precursors[permutation[i]] = permutation[i - 1]
 
-                            if i + 1 < len(permutation):
-                                data.o_succesors[permutation[i]] = permutation[i + 1]
+                                if i + 1 < len(permutation):
+                                    data.o_succesors[permutation[i]] = permutation[i + 1]
 
         data.p_order.remove(task)
 
@@ -256,10 +282,6 @@ def Insa(data):
 
 dane = Data(tasks_num, machines_num)
 
-print(f'queue: {dane.queue_tab}')
-print(f'tasks: {dane.tasks}')
-print(f'precursors: {dane.o_precursors}')
-
 checkPrecAnces(dane)
 addToTopQueue(dane)
 addQTabel(dane)
@@ -267,10 +289,13 @@ addRTabel(dane)
 sortByP(dane)
 Insa(dane)
 
+cmax = cMax(dane)
+
 print()
 print(f'tasks: {dane.tasks}')
 print(f'operations: {dane.operations}')
 print(f'queue:  {dane.queue_tab}')
+print(f'cmax: {cmax}')
 # print(f't_precursors: {dane.t_precursors}')
 # print(f't_succesor: {dane.t_succesors}')
 # print(f'o_precursors: {dane.o_precursors}')
@@ -282,4 +307,3 @@ print(f'queue:  {dane.queue_tab}')
 # print(f'p_order: {dane.p_order}')
 # print(dane.cnt)
 print()
-
